@@ -13,9 +13,14 @@ import {
   TableHead,
   TableBody, TableCell,
 } from "@/components/ui/table";
-import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Card, 
+  CardContent 
+} from "@/components/ui/card";
 import  CustomCellActions  from "./CustomCellActions";
-import { CustomTitleTable } from "./CustomTitleTable";
+import { 
+  CustomTitleTable 
+} from "./CustomTitleTable";
 
 export interface TableProps<T> {
   data: T[];
