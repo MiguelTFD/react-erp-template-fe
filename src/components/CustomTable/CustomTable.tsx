@@ -11,16 +11,12 @@ import {
   TableHeader,
   TableRow,
   TableHead,
-  TableBody, TableCell,
+  TableBody,
+  TableCell,
 } from "@/components/ui/table";
-import { 
-  Card, 
-  CardContent 
-} from "@/components/ui/card";
-import  CustomCellActions  from "./CustomCellActions";
-import { 
-  CustomTitleTable 
-} from "./CustomTitleTable";
+import { Card, CardContent } from "@/components/ui/card";
+import CustomCellActions from "./CustomCellActions";
+import { CustomTitleTable } from "./CustomTitleTable";
 
 export interface TableProps<T> {
   data: T[];
@@ -32,7 +28,12 @@ export interface TableProps<T> {
   onEdit: (item: T) => void;
   onView: (item: T) => void;
   onDelete: (item: T) => void;
-  formFields: { key: keyof T; label: string; placeholder?: string }[];
+  formFields: {
+    key: keyof T;
+    label: string;
+    placeholder?: string;
+    type?: string;
+  }[];
 }
 
 const CustomTable = <T,>({
@@ -50,7 +51,9 @@ const CustomTable = <T,>({
     data,
     columns,
     initialState: {
-      sorting: initialSorting ? [{ id: initialSorting.columnId, desc: initialSorting.desc }] : [],
+      sorting: initialSorting
+        ? [{ id: initialSorting.columnId, desc: initialSorting.desc }]
+        : [],
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -69,43 +72,61 @@ const CustomTable = <T,>({
             />
             <div className="overflow-x-auto rounded-lg border shadow-sm">
               <Table>
-                <TableHeader>
-                  {table.getHeaderGroups().map((hg) => (
-                    <TableRow key={hg.id}>
-                      {hg.headers.map((header) => (
-                        <TableHead
-                          key={header.id}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          <div className="flex items-center justify-center">
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {header.column.getIsSorted() === "asc" && " ↑"}
-                            {header.column.getIsSorted() === "desc" && " ↓"}
-                          </div>
-                        </TableHead>
-                      ))}
-                      <TableHead>Actions</TableHead>
+                {!table ? (
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead colSpan={columns.length + 1}>
+                        No hay datos disponibles
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="hover:bg-gray-50" >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
+                  </TableHeader>
+                ) : (
+                  <>
+                    <TableHeader>
+                      {table.getHeaderGroups().map((hg) => (
+                        <TableRow key={hg.id}>
+                          {hg.headers.map((header) => (
+                            <TableHead
+                              key={header.id}
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              <div className="flex items-center justify-center">
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                                {header.column.getIsSorted() === "asc" && " ↑"}
+                                {header.column.getIsSorted() === "desc" && " ↓"}
+                              </div>
+                            </TableHead>
+                          ))}
+                          <TableHead>Acciones</TableHead>
+                        </TableRow>
                       ))}
-                      <CustomCellActions
-                        row={row.original}
-                        onEdit={onEdit}
-                        onView={onView}
-                        onDelete={onDelete}
-                        fields={formFields}
-                      />
-                    </TableRow>
-                  ))}
-                </TableBody>
+                    </TableHeader>
+                    <TableBody>
+                      {table.getRowModel().rows.map((row) => (
+                        <TableRow key={row.id}>
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                          <CustomCellActions
+                            row={row.original}
+                            onEdit={onEdit}
+                            onView={onView}
+                            onDelete={onDelete}
+                            fields={formFields}
+                          />
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </>
+                )}
               </Table>
             </div>
           </div>
@@ -116,4 +137,3 @@ const CustomTable = <T,>({
 };
 
 export default CustomTable;
-

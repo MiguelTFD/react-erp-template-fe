@@ -1,9 +1,5 @@
-import CardShortCut from '@/components/card-shortcut'
-import {
-  SquareLibrary,
-  ShoppingBasket,
-} from "lucide-react"
-
+import CardShortCut from "@/components/card-shortcut";
+import { SquareLibrary, ShoppingBasket } from "lucide-react";
 
 export function SectionCards() {
   return (
@@ -19,5 +15,5 @@ export function SectionCards() {
         icon={<SquareLibrary />}
       />
     </div>
-  )
+  );
 }

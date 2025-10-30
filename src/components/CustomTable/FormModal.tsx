@@ -8,21 +8,33 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {ReactNode, useState, useEffect} from "react";
+import { ReactNode, useState, useEffect } from "react";
+
+interface FormField<T> {
+  key: keyof T;
+  label: string;
+  placeholder?: string;
+  type?: string;
+  options?: { value: string; label: string }[];
+}
 
 export interface FormModalProps<T> {
   trigger: ReactNode;
-  onSave: (values: T) => void;
+  onSave?: (values: T) => void;
   initialData?: T;
+  readonly?: boolean;
   title: string;
-  fields: {
-    key: keyof T;
-    label: string;
-    placeholder?: string;
-  }[];
+  fields: FormField<T>[];
 }
 
-function FormModal<T>({ trigger, onSave, initialData, title, fields }: FormModalProps<T>) {
+function FormModal<T>({
+  trigger,
+  onSave,
+  initialData,
+  readonly,
+  title,
+  fields,
+}: FormModalProps<T>) {
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState<Partial<T>>({});
 
@@ -35,8 +47,9 @@ function FormModal<T>({ trigger, onSave, initialData, title, fields }: FormModal
   }
 
   function handleSave() {
+    if (!onSave) return;
     onSave(values as T);
-    setOpen(false);
+    setOpen((prev) => !prev);
   }
 
   return (
@@ -47,29 +60,68 @@ function FormModal<T>({ trigger, onSave, initialData, title, fields }: FormModal
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          {fields.map((f) => (
-            <div key={String(f.key)}>
-              <label className="block text-sm font-medium text-gray-700">
-                {f.label}
-              </label>
-              <Input
-                value={(values[f.key] as unknown as string) || ""}
-                placeholder={f.placeholder}
-                onChange={(e) => handleChange(f.key, e.target.value)}
-                className="mt-1 w-full"
-              />
-            </div>
-          ))}
+          {fields.map((f) => {
+            const value = values[f.key];
+
+            if (f.type === "select" && f.options) {
+              const options = f.options || [];
+              const selectedValue = value ? String(value) : "";
+
+              return (
+                <div key={String(f.key)} className="space-y-2">
+                  <label className="block text-sm font-medium">{f.label}</label>
+                  <select
+                    value={selectedValue}
+                    onChange={(e) => handleChange(f.key, e.target.value)}
+                    className="w-full rounded-md border border-input bg-background px-3 py-2"
+                    disabled={readonly}
+                  >
+                    <option value="">Selecciona una opción</option>
+                    {options.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              );
+            }
+
+            return (
+              <div key={String(f.key)} className="space-y-2">
+                <label className="block text-sm font-medium">{f.label}</label>
+                <Input
+                  value={value !== undefined ? String(value) : ""}
+                  placeholder={f.placeholder}
+                  type={f.type}
+                  onChange={(e) => handleChange(f.key, e.target.value)}
+                  className="w-full"
+                  disabled={readonly}
+                />
+              </div>
+            );
+          })}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave}>Save</Button>
+          {!readonly ? (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => setOpen((prev) => !prev)}
+              >
+                Cancelar
+              </Button>
+              <Button onClick={handleSave}>Guardar</Button>
+            </>
+          ) : (
+            <Button variant="outline" onClick={() => setOpen((prev) => !prev)}>
+              Cerrar
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
-export default FormModal;
 
+export default FormModal;

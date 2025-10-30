@@ -1,23 +1,16 @@
-import * as React from "react"
-import {
-  House,
-  SquareLibrary,
-  ShoppingBasket,
-  Leaf,
-  UsersRound,
-  Package2,
-} from "lucide-react"
+import * as React from "react";
+import { House, SquareLibrary, Bubbles, SwatchBook } from "lucide-react";
 
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import  TeamSwitcher  from "@/components/team-switcher"
+import { NavProjects } from "@/components/nav-projects";
+import { NavUser } from "@/components/nav-user";
+import TeamSwitcher from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 const data = {
   user: {
@@ -27,7 +20,7 @@ const data = {
   },
   navMain: [
     {
-      title: "Home",
+      title: "Inicio",
       url: "/",
       icon: House,
       isActive: true,
@@ -37,7 +30,7 @@ const data = {
     {
       title: "Productos",
       url: "/productos",
-      icon: ShoppingBasket,
+      icon: Bubbles,
     },
     {
       title: "Categorias",
@@ -45,31 +38,44 @@ const data = {
       icon: SquareLibrary,
     },
     {
-      title: "Pedidos",
-      url: "/pedidos",
-      icon: Package2,
-    },
-    {
-      title: "Clientes",
-      url: "/clientes",
-      icon: UsersRound,
+      title: "SubCategorias",
+      url: "/subcateorias",
+      icon: SwatchBook,
     },
   ],
-}
+  audit: [
+    {
+      title: "Stock de productos",
+      url: "/stockproductos",
+      icon: Bubbles,
+    },
+    {
+      title: "Auditoria de productos",
+      url: "/auditoriaproductos",
+      icon: Bubbles,
+    },
+    {
+      title: "Logs del sistema",
+      url: "/logs",
+      icon: Bubbles,
+    },
+  ],
+};
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher/>
+        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavProjects projects={data.navMain} groupName={"Principal"} />
         <NavProjects projects={data.projects} groupName={"Acciones"} />
+        <NavProjects projects={data.audit} groupName={"reportes"} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

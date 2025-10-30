@@ -14,36 +14,61 @@ interface CustomCellActionsProps<T> {
   onEdit: (item: T) => void;
   onView: (item: T) => void;
   onDelete: (item: T) => void;
-  fields: { key: keyof T; label: string; placeholder?: string }[];
+  fields: {
+    key: keyof T;
+    label: string;
+    placeholder?: string;
+    type?: string;
+  }[];
 }
 
-export function CustomCellActions<T>({ row, onEdit, onView, onDelete, fields }: CustomCellActionsProps<T>) {
+export function CustomCellActions<T>({
+  row,
+  onEdit,
+  onDelete,
+  fields,
+}: CustomCellActionsProps<T>) {
   return (
     <TableCell>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
             <Pen className="h-4 w-4" />
-            <span className="sr-only">Actions</span>
+            <span className="sr-only">Acciones</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
             <FormModal
-              trigger={<span className="flex"><Pen className="mr-2 h-4 w-4" /> editar </span> }
-              title="Edit Item"
+              trigger={
+                <div className="focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
+                  <Pen className="mr-2 h-4 w-4" />
+                  <span>Editar</span>
+                </div>
+              }
+              title="Editar item"
               initialData={row}
               fields={fields}
               onSave={onEdit}
             />
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onView(row)}>
-            <EyeIcon className="mr-2 h-4 w-4" />
-            View
+          <DropdownMenuItem asChild>
+            <FormModal
+              trigger={
+                <div className="focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none">
+                  <EyeIcon className="mr-2 h-4 w-4" />
+                  <span>Ver</span>
+                </div>
+              }
+              title="Ver item"
+              initialData={row}
+              fields={fields}
+              readonly
+            />
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onDelete(row)}>
             <TrashIcon className="mr-2 h-4 w-4" />
-            Delete
+            Eliminar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
