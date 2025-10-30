@@ -1,14 +1,14 @@
-type Categoria = {
+export type Categoria = {
   idCategoria: number;
   nombre: string;
 }
 
-type SubCategoria = {
+export type SubCategoria = {
   idSubCategoria: number;
   nombre: string;
 }
 
-type Producto = {
+export type Producto = {
   idProducto: number;
   nombre: string;
   descripcion: string;

@@ -1,129 +1,71 @@
-import { ColumnDef } from "@tanstack/react-table";
+import { useState } from "react"
+import { productoService } from "@/services/productoService"
+import { productoFormFields } from "@/config/formFields/productoFormFields"
+import { normalizeFormData } from "@/utils/normalizeFormData"
+import { createDynamicColumns } from "@/utils/createDynamicColumns"
+import useCallApi from "@/hooks/useCallApi"
+import CustomTable from "@/components/CustomTable/CustomTable"
+import { Producto } from "@/types/entityTypes"
 
-import products from "./products.json";
-import CustomTable from "@/components/CustomTable/CustomTable.tsx";
-
-type Order = {
-  productId: number;
-  name: string;
-  stock: string;
-  unitPrice: string;
-  discount: string;
-  description: string;
-  size: string;
-  weight: string;
-  category: string;
-};
-
-const createColumns = (): ColumnDef<Order>[] => [
-  {
-    header: () => "Id",
-    accessorKey: "productId",
-  },
-  {
-    header: () => "Nombre",
-    accessorKey: "name",
-  },
-  {
-    header: () => "Stock",
-    accessorKey: "stock",
-  },
-  {
-    header: () => "Precio Unitario",
-    accessorKey: "unitPrice",
-  },
-  {
-    header: () => "Descuento",
-    accessorKey: "discount",
-  },
-  {
-    header: () => "Descripcion",
-    accessorKey: "description",
-  },
-  {
-    header: () => "Tamanio",
-    accessorKey: "size",
-  },
-  {
-    header: () => "Peso",
-    accessorKey: "weight",
-  },
-  {
-    header: () => "Categoria",
-    accessorKey: "category",
-  },
-];
-
-const formFields = [
-  {
-    key: "name",
-    label: "Nombre de Categoría",
-    placeholder: "Ej: Bebidas",
-  },
-  {
-    key: "stock",
-    label: "Nombre de Categoría",
-    placeholder: "Ej: Bebidas",
-  },
-  {
-    key: "unitPrice",
-    label: "Nombre de Categoría",
-    placeholder: "Ej: Bebidas",
-  },
-  {
-    key: "discount",
-    label: "Nombre de Categoría",
-    placeholder: "Ej: Bebidas",
-  },
-  {
-    key: "description",
-    label: "Nombre de Categoría",
-    placeholder: "Ej: Bebidas",
-  },
-  {
-    key: "size",
-    label: "Nombre de Categoría",
-    placeholder: "Ej: Bebidas",
-  },
-  {
-    key: "weight",
-    label: "Nombre de Categoría",
-    placeholder: "Ej: Bebidas",
-  },
-] satisfies { key: keyof Order; label: string; placeholder?: string }[];
-
-const columns = createColumns();
 
 const ProductsPageContainer = () => {
-  const handleAdd = (newItem: Order) => {
-    console.log("Nuevo:", newItem);
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { data = [], loading, error, refetch } = useCallApi<Producto[]>({
+    url: "/api/dulce",
+    methodType: "GET",
+  })
 
-  const handleEdit = (updatedItem: Order) => {
-    console.log("Editado:", updatedItem);
-  };
+  const handleAdd = async (newItemRaw: Omit<Producto, "idProducto">) => {
+    setIsSubmitting(true)
+    try {
+      const body = normalizeFormData(newItemRaw)
+      await productoService.create(body)
+      await refetch()
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
-  const handleView = (item: Order) => {
-    console.log("Ver:", item);
-  };
+  const handleEdit = async (updatedItem: Producto) => {
+    setIsSubmitting(true)
+    try {
+      const body = normalizeFormData(updatedItem)
+      await productoService.update(updatedItem.idProducto, body)
+      await refetch()
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
-  const handleDelete = (item: Order) => {
-    console.log("Eliminar:", item);
-  };
+  const handleDelete = async (item: Producto) => {
+    if (!confirm(`¿Eliminar "${item.nombre}"?`)) return
+    setIsSubmitting(true)
+    try {
+      await productoService.remove(item.idProducto)
+      await refetch()
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (error) return <div className="p-8 text-red-500">Error al cargar datos</div>
+  if (loading || isSubmitting) return <div className="p-8">Cargando...</div>
+  if (!data) return <div className="p-8">No hay datos a mostrar</div>
+  
+  const columns = createDynamicColumns(data)
+
   return (
-    <div>
-      <CustomTable
-        tableTitle={"Productos"}
-        data={products}
-        columns={columns}
-        formFields={formFields}
-        onAdd={handleAdd}
-        onEdit={handleEdit}
-        onView={handleView}
-        onDelete={handleDelete}
-      />
-    </div>
-  );
-};
+    <CustomTable
+      tableTitle="Productos"
+      data={data}
+      columns={columns}
+      formFields={productoFormFields}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
+      onView={(item) => console.log("Ver producto", item)}
+    />
+  )
+}
 
-export default ProductsPageContainer;
+export default ProductsPageContainer

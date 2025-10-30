@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { AppSidebar } from "@/components/app-sidebar"
-import { ModeToggle } from "@/components/mode-toggle"
+import { AppSidebar } from "@/components/app-sidebar";
+import { ModeToggle } from "@/components/mode-toggle";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,13 +8,13 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export default function Page() {
   return (
@@ -39,12 +39,12 @@ export default function Page() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <ModeToggle/>
+          <ModeToggle />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <Outlet/>
+          <Outlet />
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
