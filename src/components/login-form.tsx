@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { LOCAL_URL_PATH } from "@/utils/callApi";
 import {
   Card,
   CardContent,
@@ -25,7 +24,7 @@ export function LoginForm({
     e.preventDefault();
 
     try {
-      const res = await fetch(`${LOCAL_URL_PATH}/api/usuario/login`, {
+      const res = await fetch(`/api/usuario/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

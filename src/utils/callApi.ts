@@ -1,4 +1,3 @@
-export const LOCAL_URL_PATH = "https://localhost:44367";
 
 export async function callApi<T, BodyType = unknown>({
   url,
@@ -19,7 +18,7 @@ export async function callApi<T, BodyType = unknown>({
       headers["Content-Type"] = "application/json";
     }
 
-    const response = await fetch(`${LOCAL_URL_PATH}${url}`, {
+    const response = await fetch(`${url}`, {
       method: methodType,
       headers,
       ...(hasBody && {

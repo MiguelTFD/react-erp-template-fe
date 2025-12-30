@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import { LOCAL_URL_PATH } from "@/utils/callApi";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface UseCallApiProps<BodyType = any> {
@@ -33,7 +32,7 @@ export default function useCallApi<T, BodyType = any>({
           headers["Content-Type"] = "application/json";
         }
 
-        const response = await fetch(`${LOCAL_URL_PATH}${url}`, {
+        const response = await fetch(`${url}`, {
           method: methodType,
           headers,
           ...(hasBody && {
